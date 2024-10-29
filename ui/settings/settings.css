@@ -1,0 +1,58 @@
+body {
+    display: flex;
+    align-items: center;
+    align-content: space-around;
+    justify-content: center;
+    flex-direction: column;
+    gap: 10px;
+    background-color: #eff5f7;
+}
+
+.newgroup {
+    display: none;
+    align-content: space-around;
+    justify-content: center;
+    flex-direction: column;
+    flex-wrap: wrap;
+
+    background: #ebe9e4;
+    width: 250px;
+    height: 380px;
+    border: 2px solid rgb(42, 20, 238);
+}
+
+.show {
+    display: flex;
+}
+
+.error {
+    background-color: red;
+}
+
+.square {
+    display: flex;
+    align-content: space-around;
+    justify-content: center;
+    flex-direction: column;
+    flex-wrap: wrap;
+
+    background: #ebe9e4;
+    width: 250px;
+    height: 380px;
+    border: 2px solid rgb(42, 20, 238);
+}
+
+.time {
+    width: 6ch;
+}
+
+.sites {
+    height: 10px;
+}
+
+.editbuttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 10px;
+}

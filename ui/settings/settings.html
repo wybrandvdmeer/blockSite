@@ -1,0 +1,58 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="settings.css"/>
+    </head>
+    <body>
+        <br/>
+        <div id="add-group">
+	        <button id='add-group'>Add group</button>
+        </div>
+        <br/>
+        <div id='new-group' class='newgroup'>
+            <div>
+	            <label>Name</label> 
+	            <br/> 
+	            <input type='text' id='name-new'/> 
+	            <br/> 
+	            <br/> 
+	            <label>Sites</label> 
+	            <br/> 
+	            <textarea cols='20' rows='5' id='sites-new'></textarea> 
+	            <br/>
+	            <br/>
+	            <label>Duration</label>
+	            <input type='text' id='duration-new' class='time' value='0'/>
+	            <br/> 
+	            <br/> 
+	            <label>Remaining</label>
+	            <input disabled type='text' id='remaining-new' class='time' value='0'/>
+	            <br/> 
+	            <br/> 
+	            <label>Begin</label> 
+	            <input type='text' id='begin-new' class='time' value='0000'/>
+	            <label>End</label> 
+	            <input type='text' id='end-new' class='time' value='2359'/>
+	            <br/> 
+	            <br/> 
+	            Sun Mon Tue Wed Thu Fri Sat 
+	            <br/> 
+	            <input type='checkbox' id='sun-new' checked/> 
+	            <input type='checkbox' id='mon-new' checked/> 
+	            <input type='checkbox' id='tue-new' checked/> 
+	            <input type='checkbox' id='wed-new' checked/> 
+	            <input type='checkbox' id='thu-new' checked/> 
+	            <input type='checkbox' id='fri-new' checked/> 
+	            <input type='checkbox' id='sat-new' checked/> 
+	            <br/>
+	            <br/>
+				<div class='editbuttons'>
+	            	<button id='update-new'>update</button>
+	            	<button id='delete-new'>delete</button>
+				</div>
+                </div>
+        </div>
+        <div id="groups">
+        </div>
+  </body>
+  <script src="settings.js" type="module"></script>
+</html>

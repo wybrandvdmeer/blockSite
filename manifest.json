@@ -1,0 +1,21 @@
+{
+  "name": "blockSite",
+  "description": "Simple, yet flexible site blocker.",
+  "version": "1.0",
+  "manifest_version": 3,
+  "action": {
+    "default_popup": "ui/popup/popup.html",
+    "default_icon": "ui/popup/popup.png"
+  },
+
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+
+  "permissions": ["storage", "scripting", "activeTab", "tabs", "idle"],
+
+  "host_permissions": ["*://*/*"]
+
+
+}
