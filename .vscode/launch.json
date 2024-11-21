@@ -7,6 +7,14 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "Run vitest",
+            "runtimeExecutable": "vitest",
+            "cwd": "${workspaceFolder}",
+            "args": ["-t", "process1"]
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "Launch Program",
             "skipFiles": [
                 "<node_internals>/**"
