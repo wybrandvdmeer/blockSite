@@ -1,4 +1,4 @@
-var logging = true
+var logging = false
 
 export function loggerEnabled() {
     return logging

@@ -1,20 +1,25 @@
 import {log, loggerEnabled, enableLogging} from './log.js'
 import {IDLE_DETECTION_INTERVAL, start, started} from './globals.js'
 
-var locks=[]
+var called = 0
 
 export async function process(tab) {
-    /* To prevent multiple events from same tab initiating the same promise.
-    */
-    if(tab != undefined && !lock(tab)) {
+    if(called++ > 0) {
         return
     }
 
-    try {
+    do {
         await process_impl()
-    } finally {
-        tab != undefined && unlock(tab)
-    }
+
+        /* Process one more time when other event(s) came along during processing to
+        guarantee the latest tab changes are always processed.
+        */
+        if(called > 1) {
+            called = 1
+        } else {
+            called = 0
+        }
+    } while(called > 0)
 }
 
 async function process_impl() {
@@ -40,14 +45,12 @@ async function process_impl() {
 
     var activeTab = await getActiveTabByQuery() // active tab from active window.
 
-    /* Is there an active tab? 
-    */
     if(activeTab != undefined) {
         var systemIsActive = await isSystemActive()
         log('System is active:' + systemIsActive)
         
         if(systemIsActive) { 
-            var host = getHost(activeTab.url)
+            var host = getHost(activeTab)
             if(host != undefined) {
                 hosts2open.push(host)
             }
@@ -93,21 +96,6 @@ async function redirectTabs(groups, tabs) {
     [...new Set(tabs2Check)].forEach(t => blockUrl(groups, t))
 }
 
-function lock(tab) {
-    if(locks.includes(tab.id)) {
-        return false
-    }
-    locks.push(tab.id)
-    return true
-}
-
-function unlock(tab) {
-    var pos = locks.indexOf(tab.id)
-    if(pos >= 0) {
-        locks.splice(pos,1)
-    }
-}
-
 async function getActiveTabByQuery() {
     var tabs = await chrome.tabs.query({active: true, currentWindow: true})
     if(tabs.length == 1) {
@@ -121,10 +109,16 @@ function getAudibleTabs(tabs) {
 }
 
 function getAudibleHosts(tabs) {
-    return getAudibleTabs(tabs).map(t => getHost(t.url)).filter(h => h != undefined)
+    return getAudibleTabs(tabs).map(t => getHost(t)).filter(h => h != undefined)
 }
 
-function getHost(url) {
+function getHost(tab) {
+    var url 
+    if(tab.url != undefined && tab.url.length > 0) {
+        url = tab.url
+    } else {
+        url = tab.pendingUrl
+    }
     try {
         return new URL(url).host
     } catch(e) {
@@ -133,8 +127,14 @@ function getHost(url) {
 }
 
 function blockUrl(groups, tab) {
-    var host = getHost(tab.url)
+    var host = getHost(tab)
+    
     log('blockUrl - check host ' + host)
+
+    if(host == undefined) {
+        return
+    }
+
     for(const g of groups) {
         var site = g.sites.find(e => e == host)
         if(site != undefined && inActiveInterval(g) && remainingDuration(g) <= 0) {
@@ -240,7 +240,7 @@ export function remainingDuration(group) {
     if(group.start == null) {
         remaining = group.remaining
     } else  {
-        remaining = group.remaining - Math.floor((new Date().getTime() - group.start)/1000);
+        remaining = group.remaining - Math.floor((getCurrentTime() - group.start)/1000);
     }
     log('Remaining duration(' + group.name + '): ' + remaining);
     return remaining;

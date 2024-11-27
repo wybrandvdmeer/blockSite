@@ -44,6 +44,48 @@ afterEach(() => {
     vi.useRealTimers()
 })
 
+test('Multiple hosts: 1 active and 1 audible', async () => {
+    start()
+    var startTime = epoch('01/20/2024 11:55:00')
+    pushArr(groups, new Group(0, 'multiple hosts', ['host1', 'host2'], 0, 0, '0000', '2359', [0,1,2,3,4,5,6], startTime))
+    pushArr(tabs, 
+        {id: 0, active: true, audible: false, url: 'https://host1'},
+        {id: 1, active: false, audible: true, url: 'https://host2'},
+    )
+
+    process()
+    await flushPromises()
+    
+    expect(global.chrome.tabs.update).toBeCalledTimes(2)
+
+    assert(global.chrome.tabs.update.mock.calls[0][0] == 1)
+    assert(global.chrome.tabs.update.mock.calls[1][0] == 0)
+})
+
+test('Multiple hosts', async () => {
+    start()
+    var startTime = epoch('01/20/2024 11:55:00')
+    pushArr(groups, new Group(0, 'multiple hosts', ['host1', 'host2'], 0, 0, '0000', '2359', [0,1,2,3,4,5,6], startTime))
+    pushArr(tabs, 
+        {id: 0, active: true, audible: false, url: 'https://host1'},
+        {id: 1, active: false, audible: false, url: 'https://host2'},
+    )
+    process()
+    await flushPromises()
+    
+    expect(global.chrome.tabs.update).toHaveBeenCalledOnce()
+    assert(global.chrome.tabs.update.mock.calls[0][0] == 0)
+
+    pushArr(tabs, 
+        {id: 1, active: true, audible: false, url: 'https://host2'},
+    )
+
+    process()
+    await flushPromises()
+
+    assert(global.chrome.tabs.update.mock.calls[1][0] == 1)
+})
+
 test('Close group when there is no tab', async () => {
     start()
     var startTime = epoch('01/20/2024 11:55:00')
