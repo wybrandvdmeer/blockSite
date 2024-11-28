@@ -11,7 +11,8 @@ setInterval(heartBeat, HEARTBEAT_INTERVAL)
 
 chrome.runtime.onInstalled.addListener(async () => {
     log('Initialize extension')
-    if(await chrome.storage.local.get('groups') == undefined) {
+    var mem = await chrome.storage.local.get('groups')
+    if(mem['groups'] == undefined) {
         chrome.storage.local.set({'groups': []})
     }
 })
@@ -20,16 +21,14 @@ chrome.tabs.onActivated.addListener(async (activeInfo) => {
     var tab = await chrome.tabs.get(activeInfo.tabId).catch((e) => {
         log('Error')
     })
-
-    if(tab != undefined) {
-        log('onActivated(' + tab.url + ')')
-        process(tab)
-    }
+        
+    log('onActivated(' + tab.url + ')')
+    process()
 })
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     log('onUpdated(' + tab.url + ')')
-    process(tab)
+    process()
 })
 
 chrome.windows.onFocusChanged.addListener(async (windowIDEvent) => {

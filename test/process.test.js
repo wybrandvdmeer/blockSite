@@ -44,6 +44,50 @@ afterEach(() => {
     vi.useRealTimers()
 })
 
+test('Deal with yesterday processing an open group - test 2', async () => {
+    start()
+    var startTime = epoch('01/19/2024 11:55:00')
+
+    var grp = new Group(0, 'host', ['host'], 10, 300, '0000', '2359', [0,1,2,3,4,5,6], startTime)
+    grp.lastUpdated = epoch('01/19/2024 11:59:30')
+    pushArr(groups, grp)
+    pushArr(tabs, {id: 0, active: true, audible: false, url: 'https://host'}) // Open group.
+
+    process()
+    await flushPromises()
+    
+    var mem = global.chrome.storage.local.set.mock.calls[0][0]
+    assert(mem['groups'][0].start != null)
+    assert(mem['groups'][0].remaining == 600)
+})
+
+test('Deal with yesterday processing a closed group - test 2', async () => {
+    start()
+    var grp = new Group(0, 'host', ['host'], 10, 300, '0000', '2359', [0,1,2,3,4,5,6], null)
+    grp.lastUpdated = epoch('01/19/2024 11:59:30')
+    pushArr(groups, grp)
+    pushArr(tabs, {id: 0, active: true, audible: false, url: 'https://host'}) // Open group.
+
+    process()
+    await flushPromises()
+    
+    var mem = global.chrome.storage.local.set.mock.calls[0][0]
+    assert(mem['groups'][0].start != null)
+    assert(mem['groups'][0].remaining == 600)
+})
+
+test('Do not block Chrome pages', async () => {
+    start()
+    pushArr(groups, new Group(0, 'Chrome host', ['newtab'], 0, 0, '0000', '2359', [0,1,2,3,4,5,6], epoch('01/20/2024 11:55:00')))
+    pushArr(tabs, {id: 0, active: true, audible: false, url: 'chrome://newtab/'})
+    pushArr(tabs, {id: 0, active: false, audible: true, url: 'chrome://newtab/'}) // Ofcource not possible.
+    
+    process()
+    await flushPromises()
+    
+    expect(global.chrome.tabs.update).toHaveBeenCalledTimes(0)
+})
+
 test('Multiple hosts: 1 active and 1 audible', async () => {
     start()
     var startTime = epoch('01/20/2024 11:55:00')

@@ -3,7 +3,7 @@ import {IDLE_DETECTION_INTERVAL, start, started} from './globals.js'
 
 var called = 0
 
-export async function process(tab) {
+export async function process() {
     if(called++ > 0) {
         return
     }
@@ -120,7 +120,11 @@ function getHost(tab) {
         url = tab.pendingUrl
     }
     try {
-        return new URL(url).host
+        var u = new URL(url)
+        if(u.protocol != undefined && u.protocol.startsWith('chrome')) {
+            return undefined
+        }
+        return u.host
     } catch(e) {
         return undefined
     }
