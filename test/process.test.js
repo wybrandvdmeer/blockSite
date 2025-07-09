@@ -173,7 +173,7 @@ test('Open active group after shutdown', async () => {
     pushArr(tabs, {active: false, audible: false, id: 0, url: 'https://host'})
     process()
     await flushPromises()
-    expect(global.chrome.storage.local.set).toHaveBeenCalledOnce()
+    expect(global.chrome.storage.local.set).toBeCalledTimes(2)
     var mem = global.chrome.storage.local.set.mock.calls[0][0]
     assert(mem['groups'][0].start != null)
     assert(mem['groups'][0].remaining == 300)
@@ -185,7 +185,7 @@ test('Open active group', async () => {
     pushArr(tabs, {active: true, audible: false, id: 0, url: 'https://host'})
     process()
     await flushPromises()
-    expect(global.chrome.storage.local.set).toHaveBeenCalledOnce()
+    expect(global.chrome.storage.local.set).toBeCalledTimes(2)
     var mem = global.chrome.storage.local.set.mock.calls[0][0]
     assert(mem['groups'][0].start != null)
 })
@@ -215,13 +215,13 @@ test('hosts2groups method', () => {
 
 test('Open group', () => {
     var group = new Group(0, 'host', ['host'], 10, 600, '0000', '2359', [0,1,2,3,4,5,6], null)
-    open(group)
+    open(group, 0)
     assert(group.start > 0)
 })
 
 test('Dont open group outside interval (no interval days)', () => {
     var group = new Group(0, 'host', ['host'], 10, 600, '0000', '2359', [], null)
-    open(group)
+    open(group, 0)
     assert(group.start == null)
 })
 
@@ -243,14 +243,14 @@ test('Deal with yesterday after restart', () => {
 test('Deal with yesterday processing an open group', () => {
     var start = epoch('01/19/2024 12:00:00')
     var group = new Group(0, 'host', ['host'], 10, 300, '0000', '2359', [0,1,2,3,4,5,6], start)
-    open(group)
+    open(group, 0)
     assert(group.remaining == 600)
 })
 
 test('Deal with yesterday processing a closed group', () => {
     var group = new Group(0, 'host', ['host'], 10, 300, '0000', '2359', [0,1,2,3,4,5,6], null)
     group.lastUpdated = epoch('01/19/2024 12:00')
-    open(group)
+    open(group, 0)
     assert(group.remaining == 600)
 })
 
