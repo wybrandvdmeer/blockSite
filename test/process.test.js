@@ -1,11 +1,12 @@
 import {vi, test, assert, expect, beforeEach, afterEach} from 'vitest'
 import {process, initMem, open, close, hosts2groups, excludeGroups} from '../process.js'
-import {start, reset} from '../globals.js'
+import {start, reset, HEARTBEAT_INTERVAL} from '../globals.js'
 import {Group} from '../data.js'
 import flushPromises from 'flush-promises'
 
 var tabs = []
 var groups = []
+var suspensionTime = 0
 
 global.chrome = {
     storage : {
@@ -20,7 +21,7 @@ global.chrome = {
                 }
                 return new Promise((resolve) => {
                     var mem = {}
-                    mem.heartBeat = new Date().getTime()
+                    mem.heartBeat = new Date().getTime() - suspensionTime
                     resolve(mem)
                 })
             }),
@@ -197,6 +198,21 @@ test('Open active group', async () => {
     expect(global.chrome.storage.local.set).toBeCalledTimes(2)
     var mem = global.chrome.storage.local.set.mock.calls[0][0]
     assert(mem['groups'][0].start != null)
+})
+
+test('Correct remaining after lid is closed and opened', async () => {
+    var currentTime = new Date().getTime()
+    suspensionTime = HEARTBEAT_INTERVAL + 2000
+
+    start()
+    pushArr(groups, new Group(0, 'host', ['host'], 0, 0, '0000', '2359', [0,1,2,3,4,5,6], currentTime))
+    pushArr(tabs, {active: true, audible: false, id: 0, url: 'https://host'})
+    process()
+    await flushPromises()
+    expect(global.chrome.storage.local.set).toBeCalledTimes(2)
+    var mem = global.chrome.storage.local.set.mock.calls[0][0]
+    assert(mem['groups'][0].start != null)
+    assert(mem['groups'][0].remaining == 32)
 })
 
 test('excludeGroups method', () => {
