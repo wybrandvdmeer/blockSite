@@ -233,8 +233,6 @@ export async function open(group, suspensionTime) {
         return false
     }
 
-    log('START: ' + group.start + ', sus: ' + suspensionTime)
-    
     var currentTime = getCurrentTime();
     var open=false
     if(group.start != null && beforeToday(group.start) || group.start == null && beforeToday(group.lastUpdated)) {
