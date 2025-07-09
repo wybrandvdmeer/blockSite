@@ -10,11 +10,20 @@ var groups = []
 global.chrome = {
     storage : {
         local : {
-            get : vi.fn().mockReturnValue(new Promise((resolve) => {
-                var mem = new Object()
-                mem.groups = groups
-                resolve(mem)
-            })),
+            get : vi.fn().mockImplementation((arg) => {
+                if(arg == 'groups') {
+                    return new Promise((resolve) => {
+                        var mem = new Object()
+                        mem.groups = groups
+                        resolve(mem)
+                    })
+                }
+                return new Promise((resolve) => {
+                    var mem = {}
+                    mem.heartBeat = new Date().getTime()
+                    resolve(mem)
+                })
+            }),
             set : vi.fn()
         }
     },
