@@ -27,7 +27,12 @@ function html(groups) {
     });
 		
 	document.getElementById('update-new').addEventListener('click', async (e) => {
-    	var group = new Group(groups.length);
+		var idx=0
+		if(groups.length != 0) {
+			idx = groups.map(g => g.id).reduce((max, curr) => Math.max(max, curr), -Infinity) + 1
+		}
+
+    	var group = new Group(idx);
 		if(updateGroup(group, 'new')) {
 			groups.push(group);
   	  		chrome.storage.local.set({'groups': groups}).then(location.reload());

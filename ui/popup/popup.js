@@ -33,7 +33,11 @@ function dynamicHtml() {
                         return;
                     }
                 }
-                var idx = groups.length;
+                var idx=0
+                if(groups.length != 0) {
+                    idx = groups.map(g => g.id).reduce((max, curr) => Math.max(max, curr), -Infinity) + 1
+                }
+
                 var group = new Group(idx, host, [host], 0, 0, '0000', '2359', [0,1,2,3,4,5,6], null);
                 groups.push(group);
                 chrome.storage.local.set({'groups': groups});
