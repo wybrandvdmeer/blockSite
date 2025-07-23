@@ -17,7 +17,9 @@ function dynamicHtml() {
             var host;
             try {
                 var url = new URL(tabs[0].url)
-                if(url.protocol != undefined && url.protocol.startsWith('chrome')) {
+                if(url.protocol != undefined && (
+                    url.protocol.startsWith('chrome') ||
+                    url.protocol.startsWith('edge'))) {
                     return;
                 }
                 host = url.host

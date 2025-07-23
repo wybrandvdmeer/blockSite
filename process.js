@@ -148,7 +148,9 @@ function getHost(tab) {
     }
     try {
         var u = new URL(url)
-        if(u.protocol != undefined && u.protocol.startsWith('chrome')) {
+        if(u.protocol != undefined && (
+            u.protocol.startsWith('chrome') ||
+            u.protocol.startsWith('edge'))) {
             return undefined
         }
         return u.host
