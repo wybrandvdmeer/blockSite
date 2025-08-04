@@ -1,0 +1,15 @@
+rm -rf /tmp/blockSite*
+
+cp -R $HOME/blockSite /tmp
+
+rm -rf /tmp/blockSite/.git
+rm -rf /tmp/blockSite/.idea
+rm -rf /tmp/blockSite/.vscode
+rm -rf /tmp/blockSite/node_modules
+rm -rf /tmp/blockSite/dist
+
+cd /tmp/blockSite
+zip -r blockSite.zip *
+mv blockSite.zip ..
+cd -
+
