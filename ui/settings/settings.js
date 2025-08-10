@@ -12,9 +12,12 @@ function html(groups) {
 		
 		document.getElementById('update-' + g.id).addEventListener('click', async (e) => {
 			if(updateGroup(g, g.id)) {
-  	 	 		chrome.storage.local.set({'groups': groups}).then(location.reload());
+  	 	 		chrome.storage.local.set({'groups': groups}).then(() => {
+					localStorage.setItem('scrollPosition', window.scrollY)
+					location.reload()
+				})
 			}
-		});
+		})
 
 		document.getElementById('delete-' + g.id).addEventListener('click', async (e) => {
 			deleteGroup(groups, g.id);
@@ -35,18 +38,27 @@ function html(groups) {
     	var group = new Group(idx);
 		if(updateGroup(group, 'new')) {
 			groups.push(group);
-  	  		chrome.storage.local.set({'groups': groups}).then(location.reload());
+  	  		chrome.storage.local.set({'groups': groups}).then(() => {
+				localStorage.setItem('scrollPosition', window.scrollY)
+				location.reload()
+			})
 		}
-	});
+	})
 	document.getElementById('delete-new').addEventListener('click', (e) => {
 		location.reload();
-	});
+	})
 	
 	var remainingElementNew = document.getElementById('remaining-new');
 	var durationElementNew = document.getElementById('duration-new');
 	durationElementNew.addEventListener('input', (e) => {
 		remainingElementNew.value = durationElementNew.value * 60;
-	});
+	})
+
+	var scrl = localStorage.getItem('scrollPosition')
+	localStorage.removeItem('scrollPosition')
+	if(scrl) {
+		window.scrollTo(0, parseInt(scrl))
+	}
 }
 
 function updateGroup(group, id) {
@@ -241,4 +253,6 @@ function group(group) {
 	            </div> \
 	        </div><br/>";
 }
-chrome.storage.local.get('groups').then(g => html(g['groups']));
+
+chrome.storage.local.get('groups').then(g => html(g['groups']))
+
