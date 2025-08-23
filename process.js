@@ -1,15 +1,16 @@
 import {log, loggerEnabled, enableLogging} from './log.js'
-import {IDLE_DETECTION_INTERVAL, HEARTBEAT_INTERVAL, HEARTBEAT_SLACK, start, started} from './globals.js'
+import {IDLE_DETECTION_INTERVAL, HEARTBEAT_INTERVAL, HEARTBEAT_SLACK} from './globals.js'
 
 var called = 0
 
-export async function process() {
+export async function process(systemStarted = false) {
     if(called++ > 0) {
         return
     }
 
     do {
-        await process_impl()
+        await process_impl(systemStarted)
+        systemStarted = false
 
         /* Process one more time when other event(s) came along during processing to
         guarantee the latest tab changes are always processed.
@@ -22,22 +23,22 @@ export async function process() {
     } while(called > 0)
 }
 
-async function process_impl() {
+async function process_impl(systemStarted) {
     var mem = await chrome.storage.local.get('groups')
     var groups = mem['groups']
     if(groups.length == 0) {
         return
     }
 
-    var saveStarted=false
-    if(!started) {
-        /* Turn logging on via group. */
-        if(!loggerEnabled() && groups.map(g => g.name).filter(n => n == 'debug-group').length == 1) {
-            enableLogging()
-        }
+    /* Turn logging on via group. */
+    if(!loggerEnabled() && groups.map(g => g.name).filter(n => n == 'debug-group').length == 1) {
+        enableLogging()
+    }
 
+    var saveStarted=false
+    if(systemStarted) {
+        log('System started')
         saveStarted = initMem(groups)
-        start()
     }
 
     var tabs = await chrome.tabs.query({})
@@ -237,7 +238,10 @@ export async function open(group, suspensionTime) {
 
     var currentTime = getCurrentTime();
     var open=false
-    if(group.start != null && beforeToday(group.start) || group.start == null && beforeToday(group.lastUpdated)) {
+
+    /* if syntax: (Open group yesterday) && (closed group yesterday) 
+    */
+    if((group.start != null && beforeToday(group.start)) || (group.start == null && beforeToday(group.lastUpdated))) {
         log('Reset duration of group ' + group.name)
         group.start = currentTime;
         group.remaining = group.duration * 60;

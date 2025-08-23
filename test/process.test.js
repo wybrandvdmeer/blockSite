@@ -1,6 +1,6 @@
 import {vi, test, assert, expect, beforeEach, afterEach} from 'vitest'
 import {process, initMem, open, close, hosts2groups, excludeGroups} from '../process.js'
-import {start, reset, HEARTBEAT_INTERVAL, HEARTBEAT_SLACK} from '../globals.js'
+import {HEARTBEAT_INTERVAL, HEARTBEAT_SLACK} from '../globals.js'
 import {Group} from '../data.js'
 import flushPromises from 'flush-promises'
 
@@ -55,7 +55,6 @@ afterEach(() => {
 })
 
 test('Deal with yesterday processing an open group - test 2', async () => {
-    start()
     var startTime = epoch('01/19/2024 11:55:00')
 
     var grp = new Group(0, 'host', ['host'], 10, 300, '0000', '2359', [0,1,2,3,4,5,6], startTime)
@@ -72,7 +71,6 @@ test('Deal with yesterday processing an open group - test 2', async () => {
 })
 
 test('Deal with yesterday processing a closed group - test 2', async () => {
-    start()
     var grp = new Group(0, 'host', ['host'], 10, 300, '0000', '2359', [0,1,2,3,4,5,6], null)
     grp.lastUpdated = epoch('01/19/2024 11:59:30')
     pushArr(groups, grp)
@@ -87,7 +85,6 @@ test('Deal with yesterday processing a closed group - test 2', async () => {
 })
 
 test('Do not block Chrome pages', async () => {
-    start()
     pushArr(groups, new Group(0, 'Chrome host', ['newtab'], 0, 0, '0000', '2359', [0,1,2,3,4,5,6], epoch('01/20/2024 11:55:00')))
     pushArr(tabs, {id: 0, active: true, audible: false, url: 'chrome://newtab/'})
     pushArr(tabs, {id: 0, active: false, audible: true, url: 'chrome://newtab/'}) // Ofcource not possible.
@@ -99,7 +96,6 @@ test('Do not block Chrome pages', async () => {
 })
 
 test('Multiple hosts: 1 active and 1 audible', async () => {
-    start()
     var startTime = epoch('01/20/2024 11:55:00')
     pushArr(groups, new Group(0, 'multiple hosts', ['host1', 'host2'], 0, 0, '0000', '2359', [0,1,2,3,4,5,6], startTime))
     pushArr(tabs, 
@@ -117,7 +113,6 @@ test('Multiple hosts: 1 active and 1 audible', async () => {
 })
 
 test('Multiple hosts', async () => {
-    start()
     var startTime = epoch('01/20/2024 11:55:00')
     pushArr(groups, new Group(0, 'multiple hosts', ['host1', 'host2'], 0, 0, '0000', '2359', [0,1,2,3,4,5,6], startTime))
     pushArr(tabs, 
@@ -141,7 +136,6 @@ test('Multiple hosts', async () => {
 })
 
 test('Close group when there is no tab', async () => {
-    start()
     var startTime = epoch('01/20/2024 11:55:00')
     pushArr(groups, new Group(0, 'host', ['host'], 10, 600, '0000', '2359', [0,1,2,3,4,5,6], startTime))
     pushArr(tabs)
@@ -154,7 +148,6 @@ test('Close group when there is no tab', async () => {
 })
 
 test('Close audio tab after duration is spent', async () => {
-    start()
     var startTime = epoch('01/20/2024 07:00:00')
     pushArr(groups, new Group(0, 'host', ['host'], 10, 600, '0000', '2359', [0,1,2,3,4,5,6], startTime))
     groups[0].lastUpdated = epoch('01/20/2024 07:05')
@@ -165,7 +158,6 @@ test('Close audio tab after duration is spent', async () => {
 })
 
 test('Close active tab after duration is spent', async () => {
-    start()
     var startTime = epoch('01/20/2024 07:00:00')
     pushArr(groups, new Group(0, 'host', ['host'], 10, 600, '0000', '2359', [0,1,2,3,4,5,6], startTime))
     groups[0].lastUpdated = epoch('01/20/2024 07:05')
@@ -176,12 +168,11 @@ test('Close active tab after duration is spent', async () => {
 })
 
 test('Open active group after shutdown', async () => {
-    reset()
     var start = epoch('01/20/2024 07:00:00')
     pushArr(groups, new Group(0, 'host', ['host'], 10, 600, '0000', '2359', [0,1,2,3,4,5,6], start))
     groups[0].lastUpdated = epoch('01/20/2024 07:05:00')
     pushArr(tabs, {active: false, audible: false, id: 0, url: 'https://host'})
-    process()
+    process(true)
     await flushPromises()
     expect(global.chrome.storage.local.set).toBeCalledTimes(2)
     var mem = global.chrome.storage.local.set.mock.calls[0][0]
@@ -190,7 +181,6 @@ test('Open active group after shutdown', async () => {
 })
 
 test('Open active group', async () => {
-    start()
     pushArr(groups,new Group(0, 'host', ['host'], 0, 0, '0000', '2359', [0,1,2,3,4,5,6], null))
     pushArr(tabs, {active: true, audible: false, id: 0, url: 'https://host'})
     process()
@@ -204,7 +194,6 @@ test('Correct remaining after lid is closed and opened', async () => {
     var currentTime = new Date().getTime()
     suspensionTime = HEARTBEAT_INTERVAL * 60 * 1000 + HEARTBEAT_SLACK + 2000
 
-    start()
     pushArr(groups, new Group(0, 'host', ['host'], 0, 0, '0000', '2359', [0,1,2,3,4,5,6], currentTime))
     pushArr(tabs, {active: true, audible: false, id: 0, url: 'https://host'})
     process()

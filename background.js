@@ -10,6 +10,10 @@ chrome.runtime.onInstalled.addListener(async () => {
     }
 })
 
+chrome.runtime.onStartup.addListener(async () => {
+    process(true)
+})
+
 chrome.tabs.onActivated.addListener(async (activeInfo) => {
     var tab = await chrome.tabs.get(activeInfo.tabId).catch((e) => {
         log('Error')
