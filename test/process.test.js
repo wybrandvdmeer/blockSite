@@ -202,7 +202,7 @@ test('Open active group', async () => {
 
 test('Correct remaining after lid is closed and opened', async () => {
     var currentTime = new Date().getTime()
-    suspensionTime = HEARTBEAT_INTERVAL + 2000
+    suspensionTime = HEARTBEAT_INTERVAL * 60 * 1000 + 20 * 1000
 
     start()
     pushArr(groups, new Group(0, 'host', ['host'], 0, 0, '0000', '2359', [0,1,2,3,4,5,6], currentTime))
@@ -212,7 +212,7 @@ test('Correct remaining after lid is closed and opened', async () => {
     expect(global.chrome.storage.local.set).toBeCalledTimes(2)
     var mem = global.chrome.storage.local.set.mock.calls[0][0]
     assert(mem['groups'][0].start != null)
-    assert(mem['groups'][0].remaining == 2)
+    assert(mem['groups'][0].remaining == 20)
 })
 
 test('excludeGroups method', () => {
