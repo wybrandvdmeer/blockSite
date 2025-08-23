@@ -42,6 +42,7 @@ chrome.idle.onStateChanged.addListener((ie) => {
 chrome.alarms.create('blocksite-alert', { periodInMinutes: HEARTBEAT_INTERVAL })
 chrome.alarms.onAlarm.addListener((alarm) => {
     if (alarm.name === 'blocksite-alert') {
+        log('Heart-beat')
         process()
     }
 })
