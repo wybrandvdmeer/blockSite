@@ -212,7 +212,7 @@ test('Correct remaining after lid is closed and opened', async () => {
     expect(global.chrome.storage.local.set).toBeCalledTimes(2)
     var mem = global.chrome.storage.local.set.mock.calls[0][0]
     assert(mem['groups'][0].start != null)
-    assert(mem['groups'][0].remaining == 32)
+    assert(mem['groups'][0].remaining == 2)
 })
 
 test('excludeGroups method', () => {

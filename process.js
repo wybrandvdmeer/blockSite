@@ -101,7 +101,7 @@ async function detectSuspensionTime() {
         heartBeat = heartBeat.heartBeat
         var currentTime = getCurrentTime()
         if(currentTime - heartBeat > HEARTBEAT_INTERVAL + 100) {
-            suspensionTime = (currentTime - heartBeat)/1000
+            suspensionTime = (currentTime - heartBeat - HEARTBEAT_INTERVAL)/1000
         }
     }
 
