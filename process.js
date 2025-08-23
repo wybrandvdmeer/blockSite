@@ -1,5 +1,5 @@
 import {log, loggerEnabled, enableLogging} from './log.js'
-import {IDLE_DETECTION_INTERVAL, HEARTBEAT_INTERVAL, start, started} from './globals.js'
+import {IDLE_DETECTION_INTERVAL, HEARTBEAT_INTERVAL, HEARTBEAT_SLACK, start, started} from './globals.js'
 
 var called = 0
 
@@ -100,7 +100,7 @@ async function detectSuspensionTime() {
     if(heartBeat != null) {
         heartBeat = heartBeat.heartBeat
         var currentTime = getCurrentTime()
-        if(currentTime - heartBeat > HEARTBEAT_INTERVAL * 60 * 1000 + 10 * 1000) {
+        if(currentTime - heartBeat > HEARTBEAT_INTERVAL * 60 * 1000 + HEARTBEAT_SLACK) {
             suspensionTime = (currentTime - heartBeat - HEARTBEAT_INTERVAL * 60 * 1000)/1000
         }
     }

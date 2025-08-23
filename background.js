@@ -2,13 +2,6 @@ import {process} from './process.js'
 import {IDLE_DETECTION_INTERVAL, HEARTBEAT_INTERVAL} from './globals.js'
 import {log} from './log.js'
 
-function heartBeat() {
-    log('set heartbeat')
-    process()
-}
-
-setInterval(heartBeat, HEARTBEAT_INTERVAL)
-
 chrome.runtime.onInstalled.addListener(async () => {
     log('Initialize extension')
     var mem = await chrome.storage.local.get('groups')
@@ -44,4 +37,11 @@ I.e. if locked or idle there is no active window.
 chrome.idle.onStateChanged.addListener((ie) => {
     log('onStateChanged(' + ie + ')')
     process()
+})
+
+chrome.alarms.create('blocksite-alert', { periodInMinutes: HEARTBEAT_INTERVAL })
+chrome.alarms.onAlarm.addListener((alarm) => {
+    if (alarm.name === 'blocksite-alert') {
+        process()
+    }
 })

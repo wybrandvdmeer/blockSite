@@ -13,7 +13,7 @@
     "type": "module"
   },
 
-  "permissions": ["storage", "activeTab", "tabs", "idle"],
+  "permissions": ["storage", "activeTab", "tabs", "idle", "alarms"],
 
   "host_permissions": ["*://*/*"]
 }
