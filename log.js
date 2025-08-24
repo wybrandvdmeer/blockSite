@@ -1,11 +1,11 @@
 var logging = false
 
-export function loggerEnabled() {
-    return logging
-}
-
 export function enableLogging() {
     logging = true
+}
+
+export function disableLogging() {
+    logging = false
 }
 
 function formatTime(number) {

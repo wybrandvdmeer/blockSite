@@ -1,4 +1,4 @@
-import {log, loggerEnabled, enableLogging} from './log.js'
+import {log, disableLogging, enableLogging} from './log.js'
 import {IDLE_DETECTION_INTERVAL, HEARTBEAT_INTERVAL, HEARTBEAT_SLACK} from './globals.js'
 
 var called = 0
@@ -30,9 +30,12 @@ async function process_impl(systemStarted) {
         return
     }
 
-    /* Turn logging on via group. */
-    if(!loggerEnabled() && groups.map(g => g.name).filter(n => n == 'debug-group').length == 1) {
+    /* Turn logging on via group. 
+    */
+    if(groups.map(g => g.name).filter(n => n == 'debug-group').length == 1) {
         enableLogging()
+    } else {
+        disableLogging()
     }
 
     var saveStarted=false
