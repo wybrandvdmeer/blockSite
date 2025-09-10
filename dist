@@ -1,8 +1,9 @@
 project=$(basename `pwd`)
+force=$1
 
 typeset -i cnt=`git status --porcelain | wc -l`
 
-if [ $cnt != 0 ]
+if [ $cnt != 0 -a "$force" != '-f' ]
 then
 	echo Not a clean git repo.
 	exit 1
