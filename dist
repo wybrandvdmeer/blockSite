@@ -21,6 +21,7 @@ rm -rf /tmp/$project/unpack
 rm -rf /tmp/$project/README.md
 rm -rf /tmp/$project/test
 rm -rf /tmp/$project/resources
+rm -rf /tmp/$project/package*json
 
 cd /tmp/$project
 
