@@ -13,6 +13,10 @@
     "type": "module"
   },
 
-  "permissions": ["storage", "activeTab", "tabs", "idle", "alarms"]
-
+  "permissions": ["storage", "activeTab", "tabs", "idle", "alarms"],
+    "icons": {
+    "128": "ui/popup/popup-128x128.png",
+    "48": "ui/popup/popup-128x128.png",
+    "16": "ui/popup/popup-128x128.png"
+ }
 }
