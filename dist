@@ -1,4 +1,4 @@
-project=blockSite
+project=$(basename `pwd`)
 
 typeset -i cnt=`git status --porcelain | wc -l`
 

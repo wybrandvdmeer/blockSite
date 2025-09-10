@@ -1,0 +1,8 @@
+project=$(basename `pwd`)
+
+rm -rf /tmp/$project
+mkdir /tmp/$project
+cp /tmp/$project.zip /tmp/$project
+cd /tmp/$project
+unzip *
+cd - 1>/dev/null
