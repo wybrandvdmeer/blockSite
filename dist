@@ -1,15 +1,45 @@
-rm -rf /tmp/blockSite*
+project=blockSite
 
-cp -R $HOME/blockSite /tmp
+typeset -i cnt=`git status --porcelain | wc -l`
 
-rm -rf /tmp/blockSite/.git
-rm -rf /tmp/blockSite/.idea
-rm -rf /tmp/blockSite/.vscode
-rm -rf /tmp/blockSite/node_modules
-rm -rf /tmp/blockSite/dist
+if [ $cnt != 0 ]
+then
+	echo Not a clean git repo.
+	exit 1
+fi
 
-cd /tmp/blockSite
-zip -r blockSite.zip *
-mv blockSite.zip ..
-cd -
+rm -rf /tmp/${project}*
 
+cp -R $HOME/$project /tmp
+
+rm -rf /tmp/$project/.git
+rm -rf /tmp/$project/.idea
+rm -rf /tmp/$project/.vscode
+rm -rf /tmp/$project/node_modules
+rm -rf /tmp/$project/dist
+rm -rf /tmp/$project/unpack
+rm -rf /tmp/$project/README.md
+rm -rf /tmp/$project/test
+rm -rf /tmp/$project/resources
+
+cd /tmp/$project
+
+find . -name \*.js | while read j
+do
+	echo Uglify $j
+	uglifyjs $j -o /tmp/j.$$
+	mv /tmp/j.$$ $j
+done
+
+find . -name \*.css | while read c
+do
+	echo Uglify $c
+	uglifycss $c --output /tmp/c.$$
+	mv /tmp/c.$$ $c
+done
+
+zip -r $project.zip *
+mv $project.zip ..
+cd - 2>/dev/null 1>&2
+
+rm -rf /tmp/${project}
