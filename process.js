@@ -1,5 +1,6 @@
 import {log, disableLogging, enableLogging} from './log.js'
 import {IDLE_DETECTION_INTERVAL, HEARTBEAT_INTERVAL, HEARTBEAT_SLACK} from './globals.js'
+import {REVISION} from './revision.js'
 
 var called = 0
 
@@ -40,7 +41,7 @@ async function process_impl(systemStarted) {
 
     var saveStarted=false
     if(systemStarted) {
-        log('System started')
+        log('System started. Build ' + REVISION)
         saveStarted = initMem(groups)
     }
 

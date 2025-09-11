@@ -24,6 +24,8 @@ rm -rf /tmp/$project/test
 rm -rf /tmp/$project/resources
 rm -rf /tmp/$project/package*json
 
+git_version=`git rev-parse --short HEAD`
+
 cd /tmp/$project
 
 find . -name \*.js | while read j
@@ -40,7 +42,11 @@ do
 	mv /tmp/c.$$ $c
 done
 
+sed "s/development/$git_version/" /tmp/$project/revision.js > /tmp/$project/r.$$
+mv /tmp/$project/r.$$ /tmp/$project/revision.js
+
 zip -r $project.zip *
+
 mv $project.zip ..
 cd - 2>/dev/null 1>&2
 
