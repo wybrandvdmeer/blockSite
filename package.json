@@ -5,5 +5,8 @@
   "dependencies": {
     "flush-promises": "^1.0.2",
     "vitest": "^2.1.5"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.1.11"
   }
 }
