@@ -9,6 +9,14 @@ then
 	exit 1
 fi
 
+echo Run unit tests.
+npm test -- --watch=false 2>/dev/null 1>&2
+if [ $? != 0 ]
+then
+	echo Unit tests failed.
+	exit 1
+fi
+
 rm -rf /tmp/${project}*
 
 cp -R $HOME/$project /tmp
