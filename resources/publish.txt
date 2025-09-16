@@ -1,0 +1,3 @@
+General:
+
+When you click on the logo of the extension, you get 2 buttons. When you click the 'block site' button, the current site is blocked. When you click the 'settings' button, you can alter the blocking behaviour in terms of duration, time interval and days.
