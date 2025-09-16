@@ -1,7 +1,7 @@
 {
-  "name": "blockSite",
+  "name": "Block site",
   "description": "Simple, yet flexible site blocker.",
-  "version": "1.5",
+  "version": "1.6",
   "manifest_version": 3,
   "action": {
     "default_popup": "ui/popup/popup.html",
