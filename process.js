@@ -4,13 +4,13 @@ import {REVISION} from './revision.js'
 
 var called = 0
 
-export async function process(systemStarted = false) {
+export async function process(systemStarted = false, force = false) {
     if(called++ > 0) {
         return
     }
 
     do {
-        await process_impl(systemStarted)
+        await process_impl(systemStarted, force)
         systemStarted = false
 
         /* Process one more time when other event(s) came along during processing to
@@ -24,7 +24,7 @@ export async function process(systemStarted = false) {
     } while(called > 0)
 }
 
-async function process_impl(systemStarted) {
+async function process_impl(systemStarted, force) {
     var mem = await chrome.storage.local.get('groups')
     var groups = mem['groups']
     if(groups.length == 0) {
@@ -91,7 +91,7 @@ async function process_impl(systemStarted) {
     
     await chrome.storage.local.set({'heartBeat': getCurrentTime()})
 
-    redirectTabs(groups, tabs)
+    redirectTabs(groups, tabs, force)
 }
 
 /*
@@ -115,12 +115,12 @@ async function detectSuspensionTime() {
     return suspensionTime
 }
 
-async function redirectTabs(groups, tabs) {
+async function redirectTabs(groups, tabs, force) {
     var tabs2Check = getAudibleTabs(tabs)
 
     var activeTabs = tabs.filter((t) => t.active)
     for(var idx=0; idx < activeTabs.length; idx++) {
-        if(await isWindowOfTabActive(activeTabs[idx])) {
+        if(force || await isWindowOfTabActive(activeTabs[idx])) {
             tabs2Check.push(activeTabs[idx])
         }
     }

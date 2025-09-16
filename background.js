@@ -18,13 +18,19 @@ chrome.tabs.onActivated.addListener(async (activeInfo) => {
     var tab = await chrome.tabs.get(activeInfo.tabId).catch((e) => {
         log('Error')
     })
-        
-    log('onActivated(' + tab?.url + ')')
+       
+    if(tab != undefined && tab != null) {
+        log('onActivated(' + tab.url + ')')
+    }
+
     process()
 })
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-    log('onUpdated(' + tab?.url + ')')
+    if(tab != undefined && tab != null) {
+        log('onUpdated(' + tab.url + ')')
+    }
+
     process()
 })
 
@@ -50,3 +56,16 @@ chrome.alarms.onAlarm.addListener((alarm) => {
         process()
     }
 })
+
+/* Listen if popup wants to block a site.
+Set force to true to skip the isWindowOfTabActive check, because when popup is being displayed, then
+window.focus equals to false.
+*/
+chrome.runtime.onMessage.addListener(
+    function(request, sender, sendResponse) {
+        if(request.message === 'block') {
+            log('Received message from background')
+            process(false, true)
+        }
+    }
+)

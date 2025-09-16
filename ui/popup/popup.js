@@ -46,6 +46,7 @@ function dynamicHtml() {
                 groups.push(group)
                 chrome.storage.local.set({'groups': groups})
                 lightUpBackGround('rgb(35,138,21)')
+                sendToBackground()
             })
         })
     })
@@ -54,4 +55,8 @@ function dynamicHtml() {
 function lightUpBackGround(color) {
     document.body.style.backgroundColor = color
     setTimeout(() => {document.body.style.backgroundColor = ''}, 500)
+}
+
+function sendToBackground() {
+    chrome.runtime.sendMessage({'message' : 'block'}).catch((e) => log('Error occurred when sending message to background: ' + e))
 }
