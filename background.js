@@ -19,12 +19,12 @@ chrome.tabs.onActivated.addListener(async (activeInfo) => {
         log('Error')
     })
         
-    log('onActivated(' + tab.url + ')')
+    log('onActivated(' + tab?.url + ')')
     process()
 })
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-    log('onUpdated(' + tab.url + ')')
+    log('onUpdated(' + tab?.url + ')')
     process()
 })
 
