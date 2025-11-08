@@ -1,6 +1,6 @@
 {
   "name": "Block site - Simple, yet powerful website blocker",
-  "description": "Simple, yet powerful site blocker.",
+  "description": "Simple, yet powerful website blocker.",
   "version": "1.6",
   "manifest_version": 3,
   "action": {
